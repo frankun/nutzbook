@@ -61,7 +61,7 @@ public class UserModule {
 	 * 退出
 	 * @param session
 	 */
-	@At
+	@At 
 	@Ok(">>:/")
 	public void logout(HttpSession session){
 		session.invalidate();

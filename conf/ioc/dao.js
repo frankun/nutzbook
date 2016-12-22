@@ -1,4 +1,10 @@
 var ioc = {
+		conf:{
+			type:"org.nutz.ioc.impl.PropertiesProxy",
+			fields:{
+				paths:["custom/db.properties"]
+			}
+		},
         dataSource : {
             type : "com.alibaba.druid.pool.DruidDataSource",
             events : {
@@ -6,12 +12,14 @@ var ioc = {
                 depose : 'close'
             },
             fields : {
-                url : "jdbc:mysql://127.0.0.1:3306/nutzbook",
-                username : "root",
-                password : "",
+                url : {java:"$conf.get('db.url')"},
+                username : {java:"$conf.get('db.username')"},
+                password : {java:"$conf.get('db.password')"},
                 testWhileIdle : true, // 非常重要,预防mysql的8小时timeout问题
-                validationQuery : "select 1" , // Oracle的话需要改一下
-                maxActive : 100
+                validationQuery : {java:"$conf.get('db.validationQuery')"}, // Oracle的话需要改一下
+                maxActive : {java:"$conf.get('db.maxActive')"},
+                filters : "mergeStat",
+                connectionProperties : "druid.stat.slowSqlMillis=2000"
             }
         },
         dao : {
