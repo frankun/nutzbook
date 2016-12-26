@@ -28,10 +28,7 @@ import com.frankun.nutzbook.bean.User;
 @Ok("json:{locked:'password|salt',ignoreNull:true}")
 @Fail("http:500")
 @Filters(@By(type=CheckSession.class, args={"me", "/"})) //检查当前session是否带me这个属性
-public class UserModule {
-
-	@Inject
-	protected Dao dao;
+public class UserModule extends BaseModule{
 
 	@At
 	public int count() {

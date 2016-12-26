@@ -13,7 +13,7 @@ import org.nutz.mvc.ioc.provider.ComboIocProvider;
 @IocBy(type=ComboIocProvider.class, args={"*js", "ioc/",
         "*anno", "com.frankun.nutzbook",
         "*tx", // 事务拦截 aop
-        "*async"}) // 异步执行aop
+        "*org.nutz.integration.quartz.QuartzIocLoader"}) // 异步执行aop
 @Modules(scanPackage=true)
 @Ok("json:full")
 @Fail("jsp:jsp.500")
