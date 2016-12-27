@@ -1,10 +1,9 @@
 package com.frankun.nutzbook.bean;
 
-import java.util.Date;
-
 import org.nutz.dao.entity.annotation.Column;
 import org.nutz.dao.entity.annotation.Id;
 import org.nutz.dao.entity.annotation.Name;
+import org.nutz.dao.entity.annotation.One;
 import org.nutz.dao.entity.annotation.Table;
 
 @Table("t_user")
@@ -12,13 +11,19 @@ public class User extends BasePojo{
 	
 	@Id
     private int id;
+	
     @Name
     @Column
     private String name;
+    
     @Column("passwd")
     private String password;
+    
     @Column
     private String salt;
+    
+    @One(target=UserProfile.class, field="id", key="userId")
+    protected UserProfile profile;
     
     public int getId() {
         return id;
@@ -44,4 +49,10 @@ public class User extends BasePojo{
     public void setSalt(String salt) {
         this.salt = salt;
     }
+	public UserProfile getProfile() {
+		return profile;
+	}
+	public void setProfile(UserProfile profile) {
+		this.profile = profile;
+	}
 }

@@ -4,11 +4,11 @@ import java.util.Date;
 
 import javax.servlet.http.HttpSession;
 
+import org.nutz.aop.interceptor.ioc.TransAop;
 import org.nutz.dao.Cnd;
-import org.nutz.dao.Dao;
 import org.nutz.dao.QueryResult;
 import org.nutz.dao.pager.Pager;
-import org.nutz.ioc.loader.annotation.Inject;
+import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
@@ -22,6 +22,7 @@ import org.nutz.mvc.annotation.Param;
 import org.nutz.mvc.filter.CheckSession;
 
 import com.frankun.nutzbook.bean.User;
+import com.frankun.nutzbook.bean.UserProfile;
 
 @IocBean
 @At("/user")
@@ -108,11 +109,13 @@ public class UserModule extends BaseModule{
 	 * @return
 	 */
 	@At
+	@Aop(TransAop.READ_COMMITTED)
 	public Object delete(@Param("id") int id, @Attr("me") int me){
 		if (me == id) {
 			return new NutMap().setv("result", "fail").setv("msg", "不能删除当前用户!!");
 		}
 		dao.delete(User.class, id);
+		dao.clear(UserProfile.class, Cnd.where("userId", "=", me));
 		return new NutMap().setv("result", "success");
 	}
 	
