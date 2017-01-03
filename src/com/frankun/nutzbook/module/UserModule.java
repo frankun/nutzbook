@@ -12,6 +12,7 @@ import org.nutz.ioc.aop.Aop;
 import org.nutz.ioc.loader.annotation.IocBean;
 import org.nutz.lang.Strings;
 import org.nutz.lang.util.NutMap;
+import org.nutz.mvc.Scope;
 import org.nutz.mvc.annotation.At;
 import org.nutz.mvc.annotation.Attr;
 import org.nutz.mvc.annotation.By;
@@ -23,6 +24,7 @@ import org.nutz.mvc.filter.CheckSession;
 
 import com.frankun.nutzbook.bean.User;
 import com.frankun.nutzbook.bean.UserProfile;
+import com.frankun.nutzbook.util.Toolkit;
 
 @IocBean
 @At("/user")
@@ -44,16 +46,24 @@ public class UserModule extends BaseModule{
 	 * @return
 	 */
 	@At
-	@Filters
-	public Object login(@Param("username") String name, @Param("password") String password, HttpSession session){
-		User user = dao.fetch(User.class, Cnd.where("name","=",name).and("password","=",password));
-		if (user == null) {
-			return false;
-		}else{
-			session.setAttribute("me", user.getId());
-			return true;
-		}
-	}
+    @Filters // 覆盖UserModule类的@Filter设置,因为登陆可不能要求是个已经登陆的Session
+    public Object login(@Param("username")String name, 
+            @Param("password")String password, 
+            @Param("captcha")String captcha,
+            @Attr(scope=Scope.SESSION, value="nutz_captcha")String _captcha,
+            HttpSession session) {
+        NutMap re = new NutMap();
+        if (!Toolkit.checkCaptcha(_captcha, captcha)) {
+            return re.setv("ok", false).setv("msg", "验证码错误");
+        }
+        User user = dao.fetch(User.class, Cnd.where("name", "=", name).and("password", "=", password));
+        if (user == null) {
+            return re.setv("ok", false).setv("msg", "用户名或密码错误");
+        } else {
+            session.setAttribute("me", user.getId());
+            return re.setv("ok", true);
+        }
+    }
 	
 	/**
 	 * 退出

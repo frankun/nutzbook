@@ -22,7 +22,7 @@
                 },
                 dataType:"json",
                 success: function(data) {
-                    alert(data);
+                    alert(data && data.ok);
                     if (data == true) {
                         alert("登陆成功");
                         location.reload();
@@ -47,8 +47,15 @@
 <body>
 <div id="login_div">
     <form action="#" id="loginForm" method="post">
-        用户名 <input name="username" type="text" value="admin">
+        用户名 <input name="username" type="text" value="frank">
         密码 <input name="password" type="password" value="123456">
+        <script type="text/javascript">
+            function next_captcha() {
+                $("#captcha_img").attr("src", "${base}/captcha/next?_=" + new Date().getTime()); 
+            }
+        </script>
+        验证码<input name="captcha" type="text" value="">
+        <img id="captcha_img" onclick="next_captcha();return false;" src="${base}/captcha/next"></img>
         <button id="login_button">提交</button>
     </form>
 </div>
